@@ -12,7 +12,7 @@
     }
     ?>
     <form action="login_handler.php" method="post">
-      <div><label for="username">Username:<input type="textbox" id="username" name="username" /></div>
+      <div><label for="username">Email:<input type="email" id="email" name="email" /></div>
         <div><label for="password">Password:<input type="password" id="password" name="password" /></div>
           <div><input type="submit"/></div>
     </form>

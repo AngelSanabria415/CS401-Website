@@ -3,19 +3,21 @@ require_once 'Klogger.php';
 
 class Dao {
 
-private $db_user = "bca6b0fea2ffb4";
-private $db_pass = "0124ed2f";
-private $db_name = "clearDB_heroku";
-private $database = "heroku_c8318cb02eed6b2";
-private $host = "us-cdbr-iron-east-01.cleardb.net";
+private $username = 'bca6b0fea2ffb4';
+private $password = '0124ed2f';
+private $dbname = 'clearDB_heroku';
+private $host = 'us-cdbr-iron-east-01.cleardb.net';
+private $logger;
 
-public function __construct() {
-$this->logger = new KLogger("log.txt", KLogger::WARN);
+public function __construct() 
+{
+	$this->logger = new KLogger("log.txt", KLogger::WARN);
 }
 
-public function getConnection() {
+public function getConnection() 
+{
     try {
-       $connection = new PDO("mysql:host={$this->host};dbname={$this->db_name}", $this->db_user, $this->db_pass);
+       $connection = new PDO("mysql:host={$this->host};dbname={$this->dbname}", $this->username, $this->password);
     } catch (Exception $e) {
       $this->logger->LogError("Couldn't connect to the database: " . $e->getMessage());
       return null;
@@ -23,7 +25,8 @@ public function getConnection() {
     return $connection;
 }
 
-public function saveUser ($firstname, $lastname, $email, $password) {
+public function saveUser () 
+{
 	$this->logger->LogDebug("Saving the user [{$firstname,$lastname}]");
 	$conn = $this->getConnection();
 	$saveQuery = "insert into user (firstname, lastname, email, password) values (:firstname, :lastname, :email, :password)";

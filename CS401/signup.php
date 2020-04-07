@@ -1,5 +1,7 @@
 <?php
 session_start();
+//require_once 'Dao.php';
+//$dao = new Dao();
 ?>
 
 <html>
@@ -9,6 +11,7 @@ session_start();
  <h1>Please Sign Up</h1>
  </head>
   <body>
+	<div class="alert alert-error"><?= $_SESSION['message'] ?></div>
 	<div>First Name: <input type="text" id="firstname" 
 		name="firstname"></div>
 	<div>Last Name: <input type="text" id="lastname" 
