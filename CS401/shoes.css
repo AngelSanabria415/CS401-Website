@@ -1,0 +1,55 @@
+/* resizes the logo */
+logo{
+        width: 100%;
+        height: auto;
+}
+
+/* center stuff */
+.center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+}
+
+/* Creates a banner */
+.banner{
+        margin: 0px auto;
+        padding: 0;
+        height: 10%;
+        width: 100%;
+        overflow: hidden;
+        border: solid;
+        background-color: white;
+        border-color: black;
+        border-width: 0px 0px 3px 0px;
+        text-align: center;
+        line-height: 95px;
+}
+
+/* centers the shoes tag */
+.shoes{
+        position: absolute;
+        top: 8px;
+        left: 16px;
+}
+
+/* creates the parameters of the image */
+.square {
+    float:left;
+    position: relative;
+    width: 30%;
+    padding-bottom : 30%; /* = width for a 1:1 aspect ratio */
+    margin:1.66%;
+    background-color:#1E1E1E;
+    overflow:hidden;
+}
+
+/* creates the parameters for the content in that sqiare*/
+.content {
+    position:absolute;
+    height:90%; /* = 100% - 2*5% padding */
+    width:90%; /* = 100% - 2*5% padding */
+    padding: 5%;
+    background-color: grey;
+
+}
