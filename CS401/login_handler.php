@@ -1,34 +1,92 @@
 <?php
-  session_start();
+session_start();
+require_once 'form_helper.php';
+require_once 'Dao.php';
+require_once 'KLogger.php';
+$logger = new KLogger("log.txt",KLogger::WARN );
+$email =  $_POST['email'];
+$password = $_POST['password'];
+$vaild = true;
+$error=array();
 
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+function valid_length($field, $min, $max) {
+	$trimmed = trim($field);
+ 	return (strlen($trimmed) >= $min && strlen($trimmed) <= $max);
+}
 
-  // to prevent mysql injections
-  $email = stripcslashes($email);
-  $password = stripcslashes($password);
-  $email = mysql_real_escape_string($email);
-  $password = mysql_real_escape_string($password);
+if(!valid_length($password, 3, 256)){
+	$error['password'] ="Please enter a password that has a greater length than 2.";
+	$valid = false;
+}
 
-  // connect to the serever and select database
-  mysql_connect("us-cdbr-iron-east-01.cleardb.net", "bca6b0fea2ffb4", "0124ed2f");
-  msql_select_db("clearDB_heroku");
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+	$error['emailerror1'] = "Must be a valid email address.";
+	$valid = false;
+}
 
-  //Query the database for the user
-  $result = mysql_query("select * from user where email = '$email' and password = '$password'") or die("Failed to query database " mysql_error());
-  $row = mysql_fetch_array($result);
+if(!valid_length($email, 2, 100)){
+	$error['emailerror2'] ="Please enter an email that has a character length of 2 and less than 100 characters.";
+	$valid = false;
+}
 
-  //Default parameters to check if the login works 
-  $email = "angelsanabria415@gmail.com";
-  $password = "12345";
+// email match using regular expressions
+if(!preg_match('/\w+@\w+\.[a-zA-Z]{2,4}/',$email)){
+	$error['emailerror3']="Please check your input.";
+	$valid = false;
+}
 
-  if ($email == $_POST['email'] && $password == $_POST['password']) {
-    $_SESSION['auth'] = true;
-    header("Location: https://oldmoneywebsite.herokuapp.com/");
-    exit;
-  } else {
-    $_SESSION['auth'] = false;
-    $_SESSION['message'] = "Invalid email or password";
-    header("Location: https://oldmoneywebsite.herokuapp.com/login.php");
-  }
+$logger ->LogDebug("Clearing the session array");
+
+if($valid){
+	$_SESSION['logged_in'] = true;
+	$logger->LogInfo("User login successful [{$email}]");
+
+}
+
+else{
+	$logger->LogWarn("User login failed [{$email}]");
+	$_SESSION['invalid'] = "Invalid email or password";
+}
+
+
+$dao= new Dao();
+
+
+try{
+	$password=hash("sha256", "test".$password);
+
+	$user = $dao->getUser($email,$password);
+
+
+	$_SESSION['username'] = $dao->userExists($email);
+
+	ensure_logged_in();
+
+	if($user){
+		$_SESSION["access_granted"]= true;
+		$_SESSION["sentiment"]= "good";
+		session_regenerate_id(true);
+		$_SESSION['emailerror1'] = null;
+		$_SESSION['emailerror2'] = null;
+		$_SESSION['emailerror3'] = null;
+		$_SESSION['password'] = null;
+		redirectSuccess("oldmoney.html",NULL);
+	}
+	else{
+
+		$_SESSION['sentiment']="bad";
+		$errors['message'] = "Invalid username or password";
+		$_SESSION['error']=$error;
+		$_SESSION['email'] = $email;
+		$_SESSION['password'] = $password;
+		redirectError("login.php?error=true",$error,$presets);
+	 }
+
+
+
+
+}catch(Exception $e){
+echo print_r($e,1);
+}
+
 ?>
